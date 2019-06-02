@@ -13,7 +13,6 @@ package se.kth.pos2.model;
      */
      PaymentCalculator(Sale sale){
         this.sale = sale;
-
     }
 
     /**
@@ -23,7 +22,6 @@ package se.kth.pos2.model;
         double change = sale.getCash() - sale.getRunningTotal();
         setChange(change);
     }
-
     private void setChange(double change){
         this.change=change;
     }

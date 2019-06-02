@@ -7,7 +7,10 @@ import se.kth.pos2.integration.ItemDto;
  */
 class RunningTotal {
     private  double itemPriceWithVat;
-    private double runningTotal = 0;
+    private double runningTotal;
+    RunningTotal(){
+        runningTotal = 0;
+    }
 
     /**
      * A method that calculates the price including the vat for an item.
@@ -26,7 +29,6 @@ class RunningTotal {
 
     private void setRunningTotal(double itemPriceWithVat){
          runningTotal = runningTotal + itemPriceWithVat;
-
     }
 
     /**
@@ -43,5 +45,12 @@ class RunningTotal {
      */
     double getRunningTotal() {
         return runningTotal;
+    }
+
+    /**
+     * a method that resets the runningTotal
+     */
+    void resetRunningTotal(){
+        runningTotal = 0;
     }
 }

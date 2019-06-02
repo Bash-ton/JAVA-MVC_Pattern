@@ -37,10 +37,15 @@ public class ItemDtoPurchaseList {
             }
         }
         return purchasedItemDtoList;
-
     }
     private int checkForDuplicates(ArrayList itemList, int number){
         int occurrences = Collections.frequency(itemList, itemList.get(number));
         return occurrences;
+    }
+    /**
+     * resets the purchase list of item DTO:s.
+     */
+    public void resetList(){
+        purchasedItemDtoList.clear();
     }
 }

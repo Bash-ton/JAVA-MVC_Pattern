@@ -3,7 +3,6 @@ package se.kth.pos2.model;
 
 import org.junit.Test;
 
-
 import static org.junit.Assert.*;
 
 /**
@@ -17,7 +16,7 @@ public class PaymentCalculatorsTest {
      * the amount of cash is less than the running total.
      */
     @Test
-    public void changeCalculatorNotEnoughCash() {
+    public void changeCalculatorNotEnoughCash() throws NotIdentifiedItemException, OperationFailedException {
         Sale sale = new Sale();
         sale.scanItem("fre");
         sale.setCash(36.24);
@@ -32,7 +31,7 @@ public class PaymentCalculatorsTest {
      * This test checks that the change is calculated correctly.
      */
     @Test
-    public void testChangeCalculator() {
+    public void testChangeCalculator()throws NotIdentifiedItemException, OperationFailedException {
         Sale sale = new Sale();
         sale.scanItem("fre");
         sale.setCash(200);
@@ -48,7 +47,7 @@ public class PaymentCalculatorsTest {
      * This test makes sure the getter method returns the correct amount of change.
      */
     @Test
-    public void getChange() {
+    public void getChange() throws NotIdentifiedItemException, OperationFailedException{
         Sale sale = new Sale();
         sale.scanItem("fre");
         sale.setCash(200);

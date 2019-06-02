@@ -11,19 +11,26 @@ public class ItemRegistry {
      * @return an item of type ItemDto.
      */
     public static ItemDto findItem(String eanCode, int number){
-        if ("ads".equals(eanCode)){
-            ItemDto item = new ItemDto(45, "Apple VAT-rate 12%", 12, number);
-            return item;
-        }
-        if ("dsa".equals(eanCode)){
-            ItemDto item = new ItemDto(29, "Banana VAT-rate 6%",6, number);
-            return item;
-        }
-        if ("fre".equals(eanCode)){
-            ItemDto item = new ItemDto(29, "Strawberry VAT-rate 25%",25, number);
-            return item;
-        }
-        return null;
+
+            if ("DATABASE".equals(eanCode)){
+                throw new ItemRegistryDataBaseException(eanCode);
+
+            }
+            else if ("ads".equals(eanCode)) {
+                ItemDto item = new ItemDto(45, "Apple VAT-rate 12%", 12, number);
+                return item;
+            }
+            else if ("dsa".equals(eanCode)) {
+                ItemDto item = new ItemDto(29, "Banana VAT-rate 6%", 6, number);
+                return item;
+            }
+            else if ("fre".equals(eanCode)) {
+                ItemDto item = new ItemDto(29, "Strawberry VAT-rate 25%", 25, number);
+                return item;
+            }
+            else return null;
+
     }
 }
+
 

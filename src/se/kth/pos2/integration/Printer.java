@@ -1,8 +1,5 @@
 package se.kth.pos2.integration;
 
-
-import se.kth.pos2.model.Sale;
-
 /**
  * This class is a printer and prints a receipt.
  */
@@ -19,11 +16,9 @@ public class Printer {
     }
 
     /**
-     * This method prints all relevant info about a sale. All relevant info is retrieved from the ReceiptDto object
-     * and the Sale object.
-     * @param sale an object of type Sale.
+     * This method prints all relevant info about a sale. All relevant info is retrieved from the ReceiptDto object.
      */
-    public void printReceipt(Sale sale){
+    public void printReceipt(){
         System.out.println("Receipt");
         System.out.println("===============================================");
         System.out.println("Store Name: " + receipt.getSTORENAME());
@@ -41,8 +36,8 @@ public class Printer {
         System.out.printf("Running Total: " );
         System.out.printf("%1.2f",receipt.getRunningTotal());
         System.out.println("kr.");
-        System.out.println("Cash payed: " + sale.getCash()+"kr");
-        System.out.println("Change back: " + sale.getChange()+"kr");
+        System.out.println("Cash payed: " + receipt.getCash()+"kr");
+        System.out.println("Change back: " + receipt.getChange()+"kr");
         System.out.println("===============================================");
     }
 }

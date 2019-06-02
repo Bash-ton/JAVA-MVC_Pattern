@@ -8,6 +8,7 @@ public final class ItemDto {
     private final String description;
     private final double vat;
     private final int numberOfSameItems;
+
     /**
      * setter method for an Item DTO
      * @param price the cost of an item not including VAT.
@@ -15,7 +16,7 @@ public final class ItemDto {
      * @param vat the VAT-rate of the item
      * @param numberOfSameItems a number containg how many items of this type was purchased.
      */
-    public ItemDto(double price, String description, double vat, int numberOfSameItems){
+    public ItemDto(double price, String description, double vat, int numberOfSameItems ){
         this.price = price;
         this.description = description;
         this.vat = vat;
@@ -49,5 +50,4 @@ public final class ItemDto {
     public int getNumberOfSameItems(){
         return numberOfSameItems;
     }
-
 }

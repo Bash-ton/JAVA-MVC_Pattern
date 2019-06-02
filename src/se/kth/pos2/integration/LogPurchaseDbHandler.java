@@ -10,9 +10,7 @@ public class LogPurchaseDbHandler {
     private final Sale sale;
     public LogPurchaseDbHandler(Sale sale){
         this.sale = sale;
-
     }
-
     /**
      * Method that contacts the data base to log a sale.
      * This method ends here due to tha data base not included in this project.

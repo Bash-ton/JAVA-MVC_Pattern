@@ -2,16 +2,13 @@ package se.kth.pos2.model;
 
 import se.kth.pos2.integration.*;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * This class handles a specific purchase.
  */
 public class Sale {
-    private final ArrayList<String> purchasedItemEanCodesList = new ArrayList<>();
+    private ArrayList<String> purchasedItemEanCodesList = new ArrayList<>();
     private RunningTotal runningTotal = new RunningTotal();
     private PaymentCalculator paymentCalc = new PaymentCalculator(this);
     private ItemDtoPurchaseList itemDtoPurchaseList = new ItemDtoPurchaseList();
@@ -19,6 +16,8 @@ public class Sale {
     private ReceiptDto receipt = new ReceiptDto(this);
     private LogPurchaseDbHandler logThisPurchase = new LogPurchaseDbHandler(this);
     private UpdateInventoryDbHandler updateInventoryDbHandler = new UpdateInventoryDbHandler(receipt);
+    private CurrentTimeAndDate timeAndDateOfSale = new CurrentTimeAndDate();
+    private ArrayList<SaleObserver> saleObservers = new ArrayList<>();
 
     /**
      * A method that adds an item to the purchase list during a scan, one item per scan.
@@ -48,22 +47,36 @@ public class Sale {
      * calls a method that creates a receipt DTO for this sale
      */
     public void createReceipt(){
-        receipt.createReceiptDto();
-
+            receipt.createReceiptDto();
     }
 
     /**
-     * Calss a method that prints a receipt for this sale
+     * Calls a method that prints a receipt for this sale
      */
     public void printReceipt(){
-        new Printer(receipt).printReceipt(this);
+        new Printer(receipt).printReceipt();
     }
 
     /**
      * Calls a method to log's this sale
+     * also notify observers that purchase is done.
      */
     public void logPurchase(){
         logThisPurchase.logSale();
+        notifyObservers();
+    }
+    private void notifyObservers(){
+        for (SaleObserver obs : saleObservers){
+            obs.newPurchase(runningTotal.getRunningTotal());
+        }
+    }
+
+    /**
+     * adds a sale observer to an array of sale observers
+     * @param obs an object ot type saleObserver
+     */
+    public void addSaleObserver(SaleObserver obs){
+        saleObservers.add(obs);
     }
 
     /**
@@ -77,14 +90,18 @@ public class Sale {
      * A method that receives all info about the most recent scanned item from an ean-code
      * @return an ItemDTO that stores all relevant info about the most recent scanned item.
      */
-    public ItemDto getItemInfoDuringScan(){
-        int numberOfItems = 1;
-        String eanCode = purchasedItemEanCodesList.get(purchasedItemEanCodesList.size()-1);
-        runningTotal.calculateItemPriceWithVatAndRunningTotal(ItemRegistry.findItem(eanCode,numberOfItems));
-        return ItemRegistry.findItem(eanCode,1);
-
+    public ItemDto getItemInfoDuringScan()throws NotIdentifiedItemException, OperationFailedException{
+            int numberOfItems = 1;
+            String eanCode = purchasedItemEanCodesList.get(purchasedItemEanCodesList.size() - 1);
+        try{
+            runningTotal.calculateItemPriceWithVatAndRunningTotal(ItemRegistry.findItem(eanCode, numberOfItems));
+            return ItemRegistry.findItem(eanCode, 1);
+        }catch (ItemRegistryDataBaseException e){
+            throw new OperationFailedException("Can not show item description due to database failure", e);
+        }catch (NullPointerException e){
+            throw new NotIdentifiedItemException(eanCode);
+        }
     }
-
     /**
      * getter method for an items description
      * @param item an itemDTO of an item
@@ -93,7 +110,6 @@ public class Sale {
     public String getItemDescription(ItemDto item){
         return item.getDescription();
     }
-
     /**
      * getter method for an items price with vat.
      * @return an item's price with vat as a double.
@@ -101,17 +117,13 @@ public class Sale {
     public double getItemPriceWithVat(){
         return runningTotal.getItemPriceWithVat();
     }
-
     /**
      * getter method for the time and date for this sale.
      * @return the date and time as a string.
      */
     public String getTimeAndDateOfSale(){
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-        return dateFormat.format(date);
+       return timeAndDateOfSale.getTimeAndDate();
     }
-
     /**
      * getter method for the whole purchase list, where every item is stored as an ItemDTO.
      * @return a list of every item in this sale as ItemDTO's. This list doesn't include any duplicates,
@@ -120,7 +132,6 @@ public class Sale {
     public ArrayList getItemDtoPurchaseList(){
         return itemDtoPurchaseList.createItemDtoPurchaseList(purchasedItemEanCodesList);
     }
-
     /**
      * getter method for the amount of cash customer payed for this sale.
      * @return cash of type double, the amount payed for this sale.
@@ -128,7 +139,6 @@ public class Sale {
     public double getCash(){
         return cash;
     }
-
     /**
      * getter method for the running total of this sale.
      * @return the running total of type double.
@@ -136,7 +146,6 @@ public class Sale {
     public double getRunningTotal(){
         return runningTotal.getRunningTotal();
     }
-
     /**
      * getter method for the change the customer will receive for this purchase.
      * @return
@@ -145,4 +154,12 @@ public class Sale {
         return paymentCalc.getChange();
     }
 
+    /**
+     * calls methods to reset running total, purchaseList of String, and purchase list of itemDTO:s
+     */
+    public void clearSaleObjects(){
+        runningTotal.resetRunningTotal();
+        purchasedItemEanCodesList.clear();
+        itemDtoPurchaseList.resetList();
+    }
 }
